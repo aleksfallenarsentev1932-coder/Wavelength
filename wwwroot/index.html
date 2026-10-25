@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wavelength</title>
+<style>
+:root{--bg:#121212;--card:#1a1a1a;--line:#2a2a2a;--text:#F1F1F1;--muted:#9CA3AF;--grad:linear-gradient(90deg,#8B5CF6,#EC4899);--r:12px}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.45 "Segoe UI",system-ui,sans-serif;padding-bottom:84px}
+h1,h2,h3,.logo{font-family:"Trebuchet MS","Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.muted{color:var(--muted)} .err{color:#f87171}
+.layout{display:grid;grid-template-columns:240px minmax(0,600px) 300px;gap:24px;max-width:1200px;margin:0 auto;padding:16px}
+.logo{font-size:22px;font-weight:700;padding:8px 12px;margin-bottom:16px}
+.logo b{background:var(--grad);-webkit-background-clip:text;color:transparent}
+nav a{display:block;padding:12px 16px;border-radius:var(--r);margin-bottom:4px;color:var(--muted);transition:.15s}
+nav a:hover{background:#1c1c1c;color:var(--text)}
+nav a.on{background:var(--card);color:var(--text)}
+.btn{background:var(--grad);border:0;border-radius:999px;padding:12px 20px;font-weight:600;width:100%;margin-top:16px;transition:.15s}
+.btn:hover{filter:brightness(1.12)} .btn:active{transform:scale(.97)}
+.btn.small{width:auto;margin:0;padding:8px 18px}
+.ghost{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.ghost:hover{border-color:#8B5CF6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px}
+article.card{cursor:pointer;transition:.15s} article.card:hover{border-color:#3a3a3a}
+.head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.ava{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;flex:none}
+.track{display:flex;gap:12px;align-items:center;background:#141414;border:1px solid var(--line);border-radius:var(--r);padding:10px;margin:12px 0;cursor:pointer}
+.track:hover{border-color:#8B5CF6}
+.cover{border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:20px;flex:none}
+.wave{display:flex;gap:2px;align-items:center;height:30px;margin-top:4px}
+.wave i{display:block;width:3px;background:linear-gradient(#8B5CF6,#EC4899);border-radius:2px;opacity:.9}
+.acts{display:flex;gap:20px;color:var(--muted);margin-top:8px}
+.acts button{background:none;border:0;color:var(--muted);transition:.15s}
+.acts button:hover{color:var(--text)}
+.acts button.on{background:var(--grad);-webkit-background-clip:text;color:transparent;font-weight:700}
+.mood{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--muted)}
+.stars{color:#EC4899;letter-spacing:2px}
+input[type=text],input[type=search],textarea,select{width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;color:var(--text);font:inherit;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#8B5CF6}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.reply{border-left:2px solid var(--line);padding-left:12px;margin:12px 0}
+.wall{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.wall .cover{width:100%!important;aspect-ratio:1;height:auto!important}
+.banner{height:140px;border-radius:var(--r);background:linear-gradient(120deg,#1e1b4b,#8B5CF6 55%,#EC4899)}
+.tabs{display:flex;gap:16px;border-bottom:1px solid var(--line);margin:16px 0}
+.tabs button{background:none;border:0;padding:8px 0;color:var(--muted)}
+.tabs button.on{color:var(--text);border-bottom:2px solid #8B5CF6}
+.notif{display:flex;gap:12px;align-items:center}
+.notif.unread{border-color:#8B5CF6}
+.chart{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.chart b{color:#EC4899;width:20px}
+.modal{position:fixed;inset:0;background:#000b;display:none;place-items:center;z-index:20}
+.modal.open{display:grid}
+.modal .box{background:#1a1a1a;border:1px solid var(--line);border-radius:20px;padding:24px;width:min(520px,92vw)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.chip{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;color:var(--muted)}
+.chip.on{color:var(--text);border-color:#8B5CF6;box-shadow:0 0 0 1px #EC4899 inset}
+.star{font-size:24px;background:none;border:0;color:#444}
+.star.on{color:#EC4899}
+#player{position:fixed;left:0;right:0;bottom:0;height:76px;background:#171717;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;gap:16px;z-index:10}
+#player .info{display:flex;gap:12px;align-items:center;min-width:200px}
+#pp{width:40px;height:40px;border-radius:50%;border:0;background:var(--grad);font-size:14px}
+@media(max-width:1000px){.layout{grid-template-columns:200px 1fr}.right{display:none}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <div class="logo">〰 <b>Wavelength</b></div>
+    <nav>
+      <a href="#/" data-p="">Главная</a>
+      <a href="#/search" data-p="search">Поиск</a>
+      <a href="#/notifications" data-p="notifications">Уведомления</a>
+      <a href="#/profile" data-p="profile">Профиль</a>
+    </nav>
+    <button class="btn" id="open-modal">Создать пост</button>
+  </aside>
+
+  <main id="view"></main>
+
+  <aside class="right">
+    <input type="search" id="side-search" placeholder="Поиск музыки и тредов…">
+    <div class="card" style="margin-top:16px"><h3 style="margin-bottom:8px">Тренды сегодня</h3><div id="trends" class="muted">…</div></div>
+  </aside>
+</div>
+
+<div class="modal" id="modal"><div class="box">
+  <div class="top"><h2>Создать новый пост</h2><button class="ghost" id="close-modal">✕</button></div>
+  <textarea id="m-body" rows="4" maxlength="1000" placeholder="Что вы слушаете в этот поздний вечер? Расскажите о своих эмоциях…"></textarea>
+  <p class="muted" style="margin:12px 0 4px">Трек</p>
+  <select id="m-track"></select>
+  <p class="muted" style="margin:12px 0 0">Ваша оценка:</p>
+  <div id="m-stars"></div>
+  <p class="muted" style="margin-top:8px">Настроение трека:</p>
+  <div class="chips" id="m-moods"></div>
+  <p class="err" id="m-err"></p>
+  <div style="display:flex;justify-content:flex-end;gap:12px;align-items:center">
+    <button class="ghost" id="m-cancel">Отмена</button>
+    <button class="btn small" id="m-publish">Опубликовать</button>
+  </div>
+</div></div>
+
+<div id="player">
+  <div class="info"><div id="p-cover"></div><div><div id="p-title"><b>Выберите трек</b></div><div class="muted" id="p-artist" style="font-size:13px"></div></div></div>
+  <div style="display:flex;align-items:center;gap:16px"><button id="pp">▶</button><div class="wave" id="p-wave"></div></div>
+  <div class="muted" style="font-size:13px;min-width:120px;text-align:right">🔊 ▬▬▬▬</div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+// Защита от XSS: весь пользовательский текст экранируется перед вставкой в HTML
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const api = async (url, opt) => {
+  const r = await fetch(url, opt);
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Ошибка запроса');
+  return j;
+};
+const send = (url, data) => api(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data || {})});
+const hue = s => [...String(s)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
+const cover = (t, size) => `<div class="cover" style="width:${size}px;height:${size}px;background:linear-gradient(135deg,hsl(${hue(t)} 60% 38%),hsl(${(hue(t)+70)%360} 70% 18%))">${esc((t || '♪')[0])}</div>`;
+const ava = n => `<div class="ava" style="background:hsl(${hue(n)} 50% 35%)">${esc((n || '?')[0])}</div>`;
+const wave = n => Array.from({length:n}, (_, i) => `<i style="height:${6 + Math.abs(Math.sin(i * 1.7)) * 22}px"></i>`).join('');
+const fmt = s => { const [d, t] = String(s).split(' '); const [, m, dd] = d.split('-'); return `${dd}.${m} ${(t || '').slice(0, 5)}`; };
+const MOODS = {energetic:'Энергичный', melancholic:'Меланхоличный', relaxing:'Расслабляющий', nostalgic:'Ностальгический'};
+const NOTIF = {reply:'ответил(а) на ваш пост', mention:'упомянул(а) вас', repost:'сделал(а) репост вашего трека', like:'оценил(а) ваш трек', follow:'подписался(лась) на вас'};
+
+// ---------- Плеер ----------
+let playing = false;
+$('#p-wave').innerHTML = wave(40);
+function play(title, artist) {
+  $('#p-cover').innerHTML = cover(title, 48);
+  $('#p-title').innerHTML = `<b>${esc(title)}</b>`;
+  $('#p-artist').textContent = artist;
+  playing = true; $('#pp').textContent = '❚❚';
+}
+$('#pp').onclick = () => { playing = !playing; $('#pp').textContent = playing ? '❚❚' : '▶'; };
+
+// ---------- Карточка поста ----------
+function postCard(p) {
+  return `<article class="card" data-id="${p.id}">
+    <div class="head">${ava(p.display_name)}<div><b>${esc(p.display_name)}</b> <span class="muted">@${esc(p.username)} · ${fmt(p.created_at)}</span></div></div>
+    <div>${esc(p.body)}</div>
+    ${p.title ? `<div class="track" data-play="${esc(p.title)}" data-artist="${esc(p.artist)}">${cover(p.title, 56)}
+      <div><b>${esc(p.title)}</b><div class="muted" style="font-size:13px">${esc(p.artist)}</div><div class="wave">${wave(26)}</div></div></div>` : ''}
+    <div style="display:flex;gap:8px;align-items:center">
+      ${p.rating ? `<span class="stars">${'★'.repeat(p.rating)}${'☆'.repeat(5 - p.rating)}</span>` : ''}
+      ${p.mood ? `<span class="mood">${MOODS[p.mood] || ''}</span>` : ''}
+    </div>
+    <div class="acts">
+      <button data-like="${p.id}" class="${p.liked ? 'on' : ''}">♥ <span>${p.likes}</span></button>
+      <button>💬 ${p.replies}</button><button>⇄ ${p.reposts}</button>
+    </div></article>`;
+}
+
+// ---------- Страницы ----------
+async function pageFeed(v) {
+  const posts = await api('/api/posts');
+  v.innerHTML = `<div class="top"><h2>Главная лента</h2></div>` + posts.map(postCard).join('');
+}
+async function pageThread(v, id) {
+  const {post, replies} = await api('/api/posts/' + id);
+  v.innerHTML = `<div class="top"><h2><a href="#/">←</a> Тред обсуждения</h2></div>${postCard(post)}
+    <div class="card"><textarea id="r-body" rows="2" maxlength="1000" placeholder="Ответить…"></textarea>
+      <p class="err" id="r-err"></p>
+      <div style="text-align:right;margin-top:8px"><button class="btn small" id="r-send">Ответить</button></div></div>
+    ${replies.map(r => `<div class="card"><div class="head">${ava(r.display_name)}<div><b>${esc(r.display_name)}</b> <span class="muted">@${esc(r.username)} · ${fmt(r.created_at)}</span></div></div>${esc(r.body)}</div>`).join('') || '<p class="muted">Ответов пока нет</p>'}`;
+  $('#r-send').onclick = async () => {
+    try { await send(`/api/posts/${id}/replies`, {body: $('#r-body').value}); route(); }
+    catch (e) { $('#r-err').textContent = e.message; }
+  };
+}
+async function pageSearch(v, q) {
+  const [posts, charts] = await Promise.all([q ? api('/api/search?q=' + encodeURIComponent(q)) : Promise.resolve([]), api('/api/charts')]);
+  v.innerHTML = `<input type="search" id="s-q" placeholder="Поиск музыки и тредов…" value="${esc(q || '')}" style="margin-bottom:16px">
+    ${q ? `<h3 style="margin-bottom:12px">Результаты (${posts.length})</h3>` + (posts.map(postCard).join('') || '<p class="muted">Ничего не найдено</p>') : ''}
+    <h3 style="margin:16px 0 8px">Чарты сегодня</h3>
+    <div class="card">${charts.map((c, i) => `<div class="chart"><b>${i + 1}</b>${cover(c.title, 40)}<div style="flex:1"><b>${esc(c.title)}</b><div class="muted" style="font-size:13px">${esc(c.artist)}</div></div><span class="muted">${c.plays} прослушиваний</span></div>`).join('')}</div>`;
+  $('#s-q').addEventListener('keydown', e => { if (e.key === 'Enter') location.hash = '#/search/' + encodeURIComponent(e.target.value.trim()); });
+}
+async function pageNotifications(v) {
+  const list = await api('/api/notifications');
+  v.innerHTML = `<div class="top"><h2>Уведомления</h2></div>` + list.map(n =>
+    `<div class="card notif ${n.is_read ? '' : 'unread'}">${ava(n.display_name)}<div style="flex:1"><b>${esc(n.display_name)}</b> ${NOTIF[n.type] || ''}
+     ${n.text ? `<div class="muted" style="font-size:13px">«${esc(n.text)}»</div>` : ''}</div><span class="muted" style="font-size:13px">${fmt(n.created_at)}</span></div>`).join('');
+}
+async function pageProfile(v, name = 'dmitry_vibe') {
+  const d = await api('/api/users/' + encodeURIComponent(name));
+  const u = d.user, wall = Array.from({length:9}, (_, i) => d.top.find(t => t.position === i + 1));
+  v.innerHTML = `<div class="top"><h2>Профиль</h2></div><div class="banner"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:-30px;padding:0 16px">
+      <div style="border:4px solid var(--bg);border-radius:50%">${ava(u.display_name).replace('width:36px','')}</div><button class="ghost">Редактировать</button></div>
+    <h2 style="margin-top:8px">${esc(u.display_name)}</h2><div class="muted">@${esc(u.username)}</div>
+    <p style="margin:8px 0">${esc(u.bio)}</p>
+    <p><b>${u.posts}</b> <span class="muted">постов</span> &nbsp; <b>${u.followers}</b> <span class="muted">подписчиков</span> &nbsp; <b>${u.following}</b> <span class="muted">подписок</span></p>
+    <div class="card" style="margin-top:16px"><b>Музыкальная стена · Топ треков</b>
+      <div class="wall">${wall.map(t => t ? `<div data-play="${esc(t.title)}" data-artist="${esc(t.artist)}" style="cursor:pointer" title="${esc(t.title)} — ${esc(t.artist)}">${cover(t.title, 100)}</div>` : `<div class="cover" style="aspect-ratio:1;background:#202020"></div>`).join('')}</div></div>
+    <div class="tabs"><button class="on" data-tab="posts">Посты</button><button data-tab="lists">Плейлисты</button></div>
+    <div id="tab-posts">${d.posts.map(postCard).join('')}</div>
+    <div id="tab-lists" hidden>${d.playlists.map(p => `<div class="card"><b>${esc(p.title)}</b> <span class="muted">· ${p.n} треков</span></div>`).join('') || '<p class="muted">Плейлистов нет</p>'}</div>`;
+  v.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => {
+    v.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === b));
+    $('#tab-posts').hidden = b.dataset.tab !== 'posts'; $('#tab-lists').hidden = b.dataset.tab !== 'lists';
+  });
+}
+
+// ---------- Роутер ----------
+async function route() {
+  const [, page, arg] = (location.hash.slice(1) || '/').split('/');
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (page || '')));
+  const v = $('#view');
+  try {
+    if (!page) await pageFeed(v);
+    else if (page === 'post') await pageThread(v, arg);
+    else if (page === 'search') await pageSearch(v, decodeURIComponent(arg || ''));
+    else if (page === 'notifications') await pageNotifications(v);
+    else if (page === 'profile') await pageProfile(v);
+    else v.innerHTML = '<p class="muted">Страница не найдена</p>';
+  } catch (e) { v.innerHTML = `<p class="err">${esc(e.message)}</p>`; }
+}
+window.addEventListener('hashchange', route);
+
+// Клики: лайк / трек / открыть тред
+$('#view').addEventListener('click', async e => {
+  const like = e.target.closest('[data-like]');
+  if (like) {
+    e.stopPropagation();
+    const r = await send(`/api/posts/${like.dataset.like}/like`);
+    like.classList.toggle('on', r.liked); like.querySelector('span').textContent = r.likes; return;
+  }
+  const tr = e.target.closest('[data-play]');
+  if (tr) { e.stopPropagation(); play(tr.dataset.play, tr.dataset.artist); return; }
+  const card = e.target.closest('article[data-id]');
+  if (card) location.hash = '#/post/' + card.dataset.id;
+});
+
+// ---------- Правая колонка ----------
+$('#side-search').addEventListener('keydown', e => { if (e.key === 'Enter') location.hash = '#/search/' + encodeURIComponent(e.target.value.trim()); });
+api('/api/trends').then(t => { $('#trends').innerHTML = t.map(x => `<div style="margin-bottom:8px"><b>#${esc(x.tag)}</b><div style="font-size:12px">${x.cnt} обсуждений</div></div>`).join('') || 'Пока пусто'; });
+
+// ---------- Модальное окно создания поста ----------
+let rating = 0, mood = null;
+function drawStars() { $('#m-stars').innerHTML = [1,2,3,4,5].map(i => `<button class="star ${i <= rating ? 'on' : ''}" data-s="${i}">★</button>`).join(''); }
+function drawMoods() { $('#m-moods').innerHTML = Object.entries(MOODS).map(([k, v]) => `<button class="chip ${mood === k ? 'on' : ''}" data-m="${k}">${v}</button>`).join(''); }
+$('#m-stars').addEventListener('click', e => { const s = e.target.closest('[data-s]'); if (s) { rating = +s.dataset.s; drawStars(); } });
+$('#m-moods').addEventListener('click', e => { const m = e.target.closest('[data-m]'); if (m) { mood = mood === m.dataset.m ? null : m.dataset.m; drawMoods(); } });
+async function openModal() {
+  rating = 0; mood = null; drawStars(); drawMoods(); $('#m-body').value = ''; $('#m-err').textContent = '';
+  const tracks = await api('/api/tracks');
+  $('#m-track').innerHTML = '<option value="">— без трека —</option>' + tracks.map(t => `<option value="${t.id}">${esc(t.title)} — ${esc(t.artist)}</option>`).join('');
+  $('#modal').classList.add('open');
+}
+const closeModal = () => $('#modal').classList.remove('open');
+$('#open-modal').onclick = openModal; $('#close-modal').onclick = closeModal; $('#m-cancel').onclick = closeModal;
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+$('#m-publish').onclick = async () => {
+  try {
+    await send('/api/posts', {body: $('#m-body').value, trackId: $('#m-track').value ? +$('#m-track').value : null, rating: rating || null, mood});
+    closeModal(); location.hash = '#/'; route();
+  } catch (e) { $('#m-err').textContent = e.message; }
+};
+
+route();
+</script>
+</body>
+</html>
